@@ -105,12 +105,12 @@ sameCompatibleTimestamp = datetime.datetime.now().strftime("%j%H%M")
 # known good
 # OH SHIT it's all time-dependent
 # which i can now do since the time works on the box
-code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
-code = "ZCZC-PEP-EAT-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
+# code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
+# code = "ZCZC-PEP-EAT-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
 # code = "ZCZC-PEP-EAT-000000+0400-2142350-SCIENCE -"  # lol jk no nuclear armageddon
-# code = "ZCZC-WXR-TOR-024031+0030-2150015-SCIENCE -"  # tornado warning, silver spring, md
+code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # tornado warning, silver spring, md
 # code = "ZCZC-WXR-SVR-024031+0030-2142200-SCIENCE -"  # severe thunderstorm warning, silver spring, md
-# code = "ZCZC-WXR-EVI-024031+0030-2150010-SCIENCE -"  # evacuation immediate!!, silver spring, md
+# code = "ZCZC-WXR-EVI-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # evacuation immediate!!, silver spring, md
 # code = "ZCZC-WXR-FFW-024031+0030-2150021-SCIENCE -"
 
 # testing
@@ -147,13 +147,13 @@ for i in range(0, 3):
 
 	
 
-signal *= -32767
+signal *= 32767
 
 signal = np.int16(signal)
 
 wavfile.write(str("same.wav"), fs, signal)
 
 
-subprocess.call("afplay same.wav", shell=True)
+# subprocess.call("afplay same.wav", shell=True)
 
 
