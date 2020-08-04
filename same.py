@@ -4,6 +4,25 @@ import random
 import sys
 import subprocess # to play the resulting wave file
 import datetime # EAS alerts are heavily dependent on timestamps so this makes it easy to send a thing now
+import argparse
+
+# parse command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--playaudiolive", "-pal", nargs='?', default=-1)
+parser.add_argument("--code", "-c", nargs='?', default="none")
+args = parser.parse_args()
+
+
+######## CONFIG / constants ########
+
+markBitFrequency = 2083 + (1/3)
+spaceBitFrequency = 1562.5
+
+
+
+
+print (args)
+
 
 fs = 43750
 
@@ -16,7 +35,10 @@ samples = np.zeros(0)
 
 
 def markBit():
-	f = 2083.33333
+	global markBitFrequency
+
+	# f = 2083.33333
+	f = markBitFrequency
 	t = 1.0 / (520 + (5/6))
 	
 	samples = np.arange(t * fs) / fs
@@ -25,7 +47,10 @@ def markBit():
 	return roffle * 0.8
 
 def spaceBit():
-	f = 1562.5
+	global spaceBitFrequency
+
+	# f = 1562.5
+	f = spaceBitFrequency
 	t = 1.0 / (520 + (5/6))
 	
 	samples = np.arange(t * fs) / fs
@@ -89,7 +114,6 @@ def preamble():
 # code = "ZCZC-EAS-RMT-011000+0100-2141800-SCIENCE-"
 # code = "ZCZC-WXR-TOR-000000+0030-2142200-SCIENCE -"
 # code = "ZCZC-PEP-EAN-000000+0400-2142350-SCIENCE -"
-# code = "SUCK MY FUCKING BALLS YOU FUCKING COCKSUCKERS"
 
 # control string
 # code = "ZCZC-EAS-RMT-011000+0100-2142200-KMMS FM -"
@@ -105,10 +129,10 @@ sameCompatibleTimestamp = datetime.datetime.now().strftime("%j%H%M")
 # known good
 # OH SHIT it's all time-dependent
 # which i can now do since the time works on the box
-# code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
+#code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
 # code = "ZCZC-PEP-EAT-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
 # code = "ZCZC-PEP-EAT-000000+0400-2142350-SCIENCE -"  # lol jk no nuclear armageddon
-code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # tornado warning, silver spring, md
+# code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # tornado warning, silver spring, md
 # code = "ZCZC-WXR-SVR-024031+0030-2142200-SCIENCE -"  # severe thunderstorm warning, silver spring, md
 # code = "ZCZC-WXR-EVI-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # evacuation immediate!!, silver spring, md
 # code = "ZCZC-WXR-FFW-024031+0030-2150021-SCIENCE -"
@@ -116,7 +140,12 @@ code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # t
 # testing
 # code = "ZCZC-CIV-LAE-024031+0030-2150022-SCIENCE -"
 # code = "ZCZC-CIV-CDW-024031+0400-" + sameCompatibleTimestamp + "-SCIENCE -"
+# code = "ZCZC-PEP-EAN-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"
 
+# code = "ZCZC-ROFL-WTF-012345+0000-YO WADDUP MOTHAFUCKAZ="
+
+
+code = args.code
 
 
 
@@ -154,6 +183,7 @@ signal = np.int16(signal)
 wavfile.write(str("same.wav"), fs, signal)
 
 
-# subprocess.call("afplay same.wav", shell=True)
+if args.playaudiolive == "1":
+	subprocess.call("afplay same.wav", shell=True)
 
 
