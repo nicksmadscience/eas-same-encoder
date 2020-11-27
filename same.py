@@ -132,7 +132,7 @@ sameCompatibleTimestamp = datetime.datetime.now().strftime("%j%H%M")
 #code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
 # code = "ZCZC-PEP-EAT-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
 # code = "ZCZC-PEP-EAT-000000+0400-2142350-SCIENCE -"  # lol jk no nuclear armageddon
-# code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # tornado warning, silver spring, md
+code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # tornado warning, silver spring, md
 # code = "ZCZC-WXR-SVR-024031+0030-2142200-SCIENCE -"  # severe thunderstorm warning, silver spring, md
 # code = "ZCZC-WXR-EVI-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # evacuation immediate!!, silver spring, md
 # code = "ZCZC-WXR-FFW-024031+0030-2150021-SCIENCE -"
@@ -145,7 +145,7 @@ sameCompatibleTimestamp = datetime.datetime.now().strftime("%j%H%M")
 # code = "ZCZC-ROFL-WTF-012345+0000-YO WADDUP MOTHAFUCKAZ="
 
 
-code = args.code
+# code = args.code
 
 
 

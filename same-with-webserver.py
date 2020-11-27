@@ -90,10 +90,49 @@ class easSAMEHeader:
 
 			# TODO: i could probably replace this with the bits() function
 
-
-
-
 		return byte_data
+
+	def generateSAMEAudio(code):
+
+		# SAME HEADER (3x)
+		for i in range(0, 3):
+			signal = np.append(signal, preamble())
+
+			# turn each character into a sequence of sine waves
+			for char in code:
+				signal = np.append(signal, byte(char))
+
+			signal = np.append(signal, np.zeros(43750)) # wait the requisite one second
+
+		# TODO: attention tone?
+
+		# TODO: audio message?
+
+
+		# EOM (3x)
+		for i in range(0, 3):
+			signal = np.append(signal, preamble())
+
+			for char in "NNNN": # NNNN = End Of Message
+				signal = np.append(signal, byte(char))
+
+			signal = np.append(signal, np.zeros(43750)) # wait the requisite one second
+
+
+		# signal *= -32767
+
+		signal = np.int16(signal)
+
+		wavfile.write(str("same.wav"), fs, signal)
+
+
+	# TODO: oh shit, I guess I need to think about multi-platform compatibility
+	def playLatestSAMEFIleOnMacOS():
+		subprocess.call("afplay same.wav", shell=True)
+
+
+
+
 
 
 
@@ -115,47 +154,6 @@ code = "ZCZC-PEP-EAT-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # n
 # code = "SUCK MY F**KING B***S YOU F**KING C*********RS" # does not seem to work :'(
 
 
-for i in range(0, 3):
-	# signal = np.append(signal, extramarks(10))
-	signal = np.append(signal, preamble())
-
-	# turn each character into a sequence of sine waves
-	for char in code:
-		signal = np.append(signal, byte(char))
-
-	# signal = np.append(signal, extramarks(6)) # ENDEC might not be as picky about this as I once thought
-
-	signal = np.append(signal, np.zeros(43750)) # wait the requisite one second
-
-
-# EOM (3x)
-for i in range(0, 3):
-	# signal = np.append(signal, extramarks(10))
-	signal = np.append(signal, preamble())
-
-	for char in "NNNN": # NNNN = End Of Message
-		signal = np.append(signal, byte(char))
-
-	# signal = np.append(signal, extramarks(6))
-
-	signal = np.append(signal, np.zeros(43750)) # wait the requisite one second
-
-	
-
-
-
-
-signal *= -32767
-
-signal = np.int16(signal)
-
-wavfile.write(str("same.wav"), fs, signal)
-
-
-subprocess.call("afplay same.wav", shell=True)
-
-
-def generateSAMEAudioBasedOnCode(sameCode):
 
 
 
@@ -166,6 +164,8 @@ def requestHandler_samecode(_get):
     global clients
 
     print urllib2.unquote(_get[2])
+
+    # TODO: implement same code
 
     # for client in clients:
     #     client.write_message(json.dumps({"messagetype": "marquee", "message": urllib2.unquote(_get[2])}))
