@@ -145,7 +145,7 @@ code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # t
 # code = "ZCZC-ROFL-WTF-012345+0000-YO WADDUP MOTHAFUCKAZ="
 
 
-# code = args.code
+code = args.code
 
 
 
