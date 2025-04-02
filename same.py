@@ -1,93 +1,51 @@
 import numpy as np
-from scipy.io import wavfile
-import random
-import sys
-import subprocess # to play the resulting wave file
+import scipy.io.wavfile
 import datetime # EAS alerts are heavily dependent on timestamps so this makes it easy to send a thing now
 import argparse
 
-# parse command-line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("--playaudiolive", "-pal", nargs='?', default=-1)
-parser.add_argument("--code", "-c", nargs='?', default="none")
-args = parser.parse_args()
+
 
 
 ######## CONFIG / constants ########
 
-markBitFrequency = 2083 + (1/3)
-spaceBitFrequency = 1562.5
+samplerate = 43750 # makes for easy lowest common denominatorization
 
 
 
-
-print (args)
-
-
-fs = 43750
-
-# t = 1.0 / (520 + (5/6))
-
-
-# f = 2083.33333
-	
-samples = np.zeros(0)
 
 
 def markBit():
-	global markBitFrequency
-
-	# f = 2083.33333
-	f = markBitFrequency
+	f = 2083.33333
 	t = 1.0 / (520 + (5/6))
 	
-	samples = np.arange(t * fs) / fs
-
-	roffle = np.sin(2 * np.pi * f * samples)
-	return roffle * 0.8
-
-def spaceBit():
-	global spaceBitFrequency
-
-	# f = 1562.5
-	f = spaceBitFrequency
-	t = 1.0 / (520 + (5/6))
-	
-	samples = np.arange(t * fs) / fs
+	samples = np.arange(t * samplerate) / samplerate
 
 	return np.sin(2 * np.pi * f * samples)
 
 
 
-signal = np.zeros(20000)
+def spaceBit():
+	f = 1562.5
+	t = 1.0 / (520 + (5/6))
+	
+	samples = np.arange(t * samplerate) / samplerate
+
+	return np.sin(2 * np.pi * f * samples)
+
+
 
 
 def byte(the_byte):
-	sys.stdout.write(the_byte)
-	sys.stdout.write(" ")
 	byte_data = np.zeros(0)
 	for i in range(0, 8):
 		if ord(the_byte) >> i & 1:
-			sys.stdout.write("1")
 			byte_data = np.append(byte_data, markBit())
 		else:
-			sys.stdout.write("0")
 			byte_data = np.append(byte_data, spaceBit())
 
-	sys.stdout.write("\n")
-	sys.stdout.flush()
-
 	return byte_data
 
 
-def extramarks(numberOfMarks):
-	"""SAGE encoders seem to add a few mark bits at the beginning and end"""
-	byte_data = np.zeros(0)
-
-	for i in range(0, numberOfMarks):
-		byte_data = np.append(byte_data, markBit())
-
-	return byte_data
 
 def preamble():
 	byte_data = np.zeros(0)
@@ -102,88 +60,88 @@ def preamble():
 		byte_data = np.append(byte_data, spaceBit())
 		byte_data = np.append(byte_data, markBit())
 
-
-
 	return byte_data
 
 
 
+def attentiontone(length=5):
+	tone = np.sin(2 * np.pi * 853 * np.arange(0, length, 1/samplerate)) 
+	tone2 = np.sin(2 * np.pi * 960 * np.arange(0, length, 1/samplerate)) 
 
-# ZCZC-WXR-RWT-020103-020209-020091-020121-029047-029165-029095-029037+0030-1051700-KEAX/NWS
+	return (tone + tone2) / 2
 
-# code = "ZCZC-EAS-RMT-011000+0100-2141800-SCIENCE-"
-# code = "ZCZC-WXR-TOR-000000+0030-2142200-SCIENCE -"
-# code = "ZCZC-PEP-EAN-000000+0400-2142350-SCIENCE -"
 
-# control string
-# code = "ZCZC-EAS-RMT-011000+0100-2142200-KMMS FM -"
+def noaatone(length=5):
+	return np.sin(2 * np.pi * 1050 * np.arange(0, length, 1/samplerate))
 
-# useful FIPS codes
-# 000000 - the whole fucking united states
-# 024031 - silver spring, md / montgomery county
-# 011001 - district of columbia
+
+def pause(length=1):
+	return np.zeros(int(samplerate * length))
+
+
+
 
 # EAS alerts are heavily dependent on timestamps so this makes it easy/fun to send a thing now
 sameCompatibleTimestamp = datetime.datetime.now().strftime("%j%H%M")
 
 # known good
-# OH SHIT it's all time-dependent
-# which i can now do since the time works on the box
-#code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
-# code = "ZCZC-PEP-EAT-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
-# code = "ZCZC-PEP-EAT-000000+0400-2142350-SCIENCE -"  # lol jk no nuclear armageddon
-code = "ZCZC-WXR-TOR-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # tornado warning, silver spring, md
-# code = "ZCZC-WXR-SVR-024031+0030-2142200-SCIENCE -"  # severe thunderstorm warning, silver spring, md
-# code = "ZCZC-WXR-EVI-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"  # evacuation immediate!!, silver spring, md
-# code = "ZCZC-WXR-FFW-024031+0030-2150021-SCIENCE -"
-
-# testing
-# code = "ZCZC-CIV-LAE-024031+0030-2150022-SCIENCE -"
-# code = "ZCZC-CIV-CDW-024031+0400-" + sameCompatibleTimestamp + "-SCIENCE -"
-# code = "ZCZC-PEP-EAN-024031+0030-" + sameCompatibleTimestamp + "-SCIENCE -"
-
-# code = "ZCZC-ROFL-WTF-012345+0000-YO WADDUP MOTHAFUCKAZ="
-
-
-code = args.code
+code = "ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -"  # nuclear armageddon (or some other form of "we are all likely to die")
 
 
 
-for i in range(0, 3):
-	# signal = np.append(signal, extramarks(10))
-	signal = np.append(signal, preamble())
+def buildMessage(code, filename="same.wav", attention="eas"):
 
-	# turn each character into a sequence of sine waves
-	for char in code:
-		signal = np.append(signal, byte(char))
-
-	# signal = np.append(signal, extramarks(6)) # ENDEC might not be as picky about this as I once thought
-
-	signal = np.append(signal, np.zeros(43750)) # wait the requisite one second
+	# STEP ONE: Insert a bit of silence
+	signal = pause(0.5)
 
 
-# EOM (3x)
-for i in range(0, 3):
-	# signal = np.append(signal, extramarks(10))
-	signal = np.append(signal, preamble())
+	# message
+	for i in range(0, 3):
+		signal = np.append(signal, preamble())
 
-	for char in "NNNN": # NNNN = End Of Message
-		signal = np.append(signal, byte(char))
+		# turn each character into a sequence of sine waves
+		for char in code:
+			signal = np.append(signal, byte(char))
 
-	# signal = np.append(signal, extramarks(6))
+		signal = np.append(signal, pause(1)) # wait the requisite one second
 
-	signal = np.append(signal, np.zeros(43750)) # wait the requisite one second
+
+	if attention == "eas":
+		signal = np.append(signal, attentiontone())
+		signal = np.append(signal, pause(1))
 
 	
-
-signal *= 32767
-
-signal = np.int16(signal)
-
-wavfile.write(str("same.wav"), fs, signal)
+	if attention == "noaa":
+		signal = np.append(signal, noaatone())
+		signal = np.append(signal, pause(1))
 
 
-if args.playaudiolive == "1":
-	subprocess.call("afplay same.wav", shell=True)
+	# EOM (3x)
+	for i in range(0, 3):
+		signal = np.append(signal, preamble())
 
+		for char in "NNNN": # NNNN = End Of Message
+			signal = np.append(signal, byte(char))
+
+		signal = np.append(signal, pause(1)) # wait the requisite one second
+
+		
+	# wave-ify
+	signal *= 32767
+
+	signal = np.int16(signal)
+
+	scipy.io.wavfile.write(filename, samplerate, signal)
+
+
+
+
+
+if __name__ == "__main__":
+	# parse command-line arguments
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--code", "-c", nargs='?', default="none")
+	args = parser.parse_args()
+
+	buildMessage(code)
 
