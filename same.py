@@ -88,7 +88,7 @@ class SAME:
 
 
 
-	def buildMessage(self, code, filename="same.wav", attention="eas"):
+	def buildMessage(self, code, filename="same.wav", tone="eas", db=-3.0):
 
 		# STEP ONE: Insert a bit of silence
 		signal = self.pause(0.5)
@@ -105,12 +105,10 @@ class SAME:
 			signal = np.append(signal, self.pause(1)) # wait the requisite one second
 
 
-		if attention == "eas":
+		if tone == "eas":
 			signal = np.append(signal, self.attentiontone())
 			signal = np.append(signal, self.pause(1))
-
-		
-		if attention == "noaa":
+		elif tone == "noaa":
 			signal = np.append(signal, self.noaatone())
 			signal = np.append(signal, self.pause(1))
 
@@ -124,9 +122,8 @@ class SAME:
 
 			signal = np.append(signal, self.pause(1)) # wait the requisite one second
 
-			
 		# wave-ify
-		signal *= 26000 # max is 32767 but i want to trim it down just a little
+		signal *= 32767 * (10.0 ** (db / 20.0))
 
 		signal = np.int16(signal)
 
@@ -144,12 +141,14 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--code", "-c", nargs='?',
 					 default="ZCZC-PEP-EAN-000000+0400-" + sameCompatibleTimestamp + "-SCIENCE -")
+	parser.add_argument("--filename", "-f", default="same.wav")
 	parser.add_argument("--tone", "-t", default="eas")
+	parser.add_argument("--db", "-d", default=-3.0)
 	args = parser.parse_args()
 
 	print (args.code)
 
 	same = SAME()
 
-	same.buildMessage(args.code)
+	same.buildMessage(args.code, filename=args.filename, tone=args.tone, db=float(args.db))
 
