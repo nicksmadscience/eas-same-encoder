@@ -47,7 +47,7 @@ class SAME:
 
 
 	def byte(self, the_byte):
-		"""Turns the provided byte into FSK data/////"""
+		"""Turns the provided byte into FSK data."""
 		byte_data = np.zeros(0)
 		for i in range(0, 8):
 			if ord(the_byte) >> i & 1:
