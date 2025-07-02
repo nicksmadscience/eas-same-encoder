@@ -59,7 +59,7 @@ class SAME:
 
 
 	def preamble(self):
-		"""Builds the sixteen-byte 10101011 preamble!"""
+		"""Builds the sixteen-byte 10101011 preamble."""
 		byte_data = np.zeros(0)
 
 		for i in range(0, 16):
