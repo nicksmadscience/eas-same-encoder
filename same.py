@@ -83,6 +83,7 @@ class SAME:
 		return (tone + tone2) / 2
 
 
+
 	def noaatone(self, length=5):
 		"""Generates a weather-radio-style 1050Hz tone..........."""
 		return np.sin(2 * np.pi * 1050 * np.arange(0, length, 1/self.samplerate))
