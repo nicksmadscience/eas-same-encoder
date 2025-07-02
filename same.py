@@ -44,6 +44,10 @@ class SAME:
 		samples = np.arange(t * self.samplerate) / self.samplerate
 
 		return np.sin(2 * np.pi * f * samples)
+	
+
+
+	
 
 
 	def byte(self, the_byte):
