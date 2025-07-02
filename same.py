@@ -47,7 +47,7 @@ class SAME:
 
 
 	def byte(self, the_byte):
-		"""Turns the provided byte into FSK data!"""
+		"""Turns the provided byte into FSK data."""
 		byte_data = np.zeros(0)
 		for i in range(0, 8):
 			if ord(the_byte) >> i & 1:
@@ -59,7 +59,7 @@ class SAME:
 
 
 	def preamble(self):
-		"""Builds the sixteen-byte 10101011 preamble."""
+		"""Builds the sixteen-byte 10101011 preamble!"""
 		byte_data = np.zeros(0)
 
 		for i in range(0, 16):
@@ -83,8 +83,9 @@ class SAME:
 		return (tone + tone2) / 2
 
 
+
 	def noaatone(self, length=5):
-		"""Generates a weather-radio-style 1050Hz tone."""
+		"""Generates a weather-radio-style 1050Hz tone..........."""
 		return np.sin(2 * np.pi * 1050 * np.arange(0, length, 1/self.samplerate))
 
 
