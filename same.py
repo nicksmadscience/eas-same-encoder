@@ -47,7 +47,7 @@ class SAME:
 
 
 	def byte(self, the_byte):
-		"""Turns the provided byte into FSK data!"""
+		"""Turns the provided byte into FSK data/////"""
 		byte_data = np.zeros(0)
 		for i in range(0, 8):
 			if ord(the_byte) >> i & 1:
@@ -81,7 +81,6 @@ class SAME:
 		tone2 = np.sin(2 * np.pi * 960 * np.arange(0, length, 1/self.samplerate)) 
 
 		return (tone + tone2) / 2
-
 
 
 
