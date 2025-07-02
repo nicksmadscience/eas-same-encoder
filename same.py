@@ -59,7 +59,7 @@ class SAME:
 
 
 	def preamble(self):
-		"""Builds the sixteen-byte 10101011 preamble."""
+		"""Builds the sixteen-byte 10101011 preamble!"""
 		byte_data = np.zeros(0)
 
 		for i in range(0, 16):
@@ -76,7 +76,7 @@ class SAME:
 
 
 	def attentiontone(self, length=5):
-		"""Generates a standard two-tone attention signal."""
+		"""Generates a standard two-tone attention signal!"""
 		tone = np.sin(2 * np.pi * 853 * np.arange(0, length, 1/self.samplerate)) 
 		tone2 = np.sin(2 * np.pi * 960 * np.arange(0, length, 1/self.samplerate)) 
 
@@ -84,12 +84,12 @@ class SAME:
 
 
 	def noaatone(self, length=5):
-		"""Generates a weather-radio-style 1050Hz tone."""
+		"""Generates a weather-radio-style 1050Hz tone!"""
 		return np.sin(2 * np.pi * 1050 * np.arange(0, length, 1/self.samplerate))
 
 
 	def pause(self, length=1):
-		"""Generates a period of silence for the specified duration."""
+		"""Generates a period of silence for the specified duration!"""
 		return np.zeros(int(self.samplerate * length))
 
 
