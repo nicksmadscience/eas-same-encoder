@@ -47,9 +47,6 @@ class SAME:
 	
 
 
-	
-
-
 	def byte(self, the_byte):
 		"""Turns the provided byte into FSK data."""
 		byte_data = np.zeros(0)
