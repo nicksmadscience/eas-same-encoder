@@ -18,7 +18,7 @@ import argparse
 
 
 class SAME:
-	"""Generates valid EAS SAME messages and tones."""
+	"""Generates valid EAS SAME messages and tones.""" 
 
 	def __init__(self):
 		######## CONFIG / constants ########
